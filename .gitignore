@@ -1,0 +1,5 @@
+# Ignroe vscode folder
+*.vscode
+
+# Ignore python cache
+__pycache__
