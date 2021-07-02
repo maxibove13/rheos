@@ -20,9 +20,9 @@ Takes the _rgc_ outputs of chaman flow solver as input and generates the desired
 >
 > > Sergey, Larry, Craig
 
-## Program instructions
+## Installation
 
-1. Create and activate virtual environment (See `venv` section below) in `rheos` project root folder.
+1. Create a virtual environment (See `venv` section below) in `rheos` project root folder.
 
    i. Create venv
 
@@ -30,17 +30,41 @@ Takes the _rgc_ outputs of chaman flow solver as input and generates the desired
    python3 -m venv .venv
    ```
 
-   ii. Activate venv
-
-   ```bash
-   source .venv/bin/activate
-   ```
-
 2. Install necessary dependencies via `requirements.txt`
 
    ```bash
    pip install -r requirements.txt
    ```
+
+3. Install python matlab.engine in order to run matlab functions from python
+
+   i. Open a matlab session and obtain the root path of matlab
+
+   ```matlab
+   matlabroot
+   ```
+
+   ii. Go to `matlabroot/extern/engines/python`
+
+   ```bash
+   cd matlabroot/extern/engines/python
+   ```
+
+   Note that `matlabroot` means the path to matlab obtained in step i.
+
+   iii. Install matlab.engine
+
+   ```bash
+   python setup.py install
+   ```
+
+## Execution
+
+1.  Activate venv
+
+```bash
+source .venv/bin/activate
+```
 
 ### venv
 
