@@ -6,3 +6,6 @@ __pycache__
 
 # Ignore python virtual environment directory
 .venv
+
+# Ignore grd files
+*.grd

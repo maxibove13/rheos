@@ -11,18 +11,29 @@ __date__ = "06/21"
 # Build-in modules
 
 # Third-party modules
+from mayavi import mlab
 
 # Local modules
-from pre.checkgrd import checkgrd
+from post.plotgrid import *
+from pre.checkgrd import readgrd
 
-grid_filename = "duct1A.grd"
+# Define the filenames containing the grid block information
+grid_filename = ["duct1A.grd", "duct1B.grd", "duct1C.grd"]
 
-xc, yc, zc = checkgrd(grid_filename)
+# Initialize the figure
+# plt, ax, c = initplot()
 
-# Convert the tuples to arrays
-# from within np, find array()
-# np.array(xc)
-# np.array(yc)
-# np.array(zc)
+# Define rgb colors
+c = [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
 
-print(xc, yc, zc)
+# Loop through all grid blocks
+for block in range(len(grid_filename)):
+    # Obtain the cell centers of this block from the .grd file
+    xc, yc, zc = readgrd(grid_filename[block])
+    # Plot this block
+    plotgrid(grid_filename[block], xc, yc, zc, c[block])
+
+# Set aspect ratio to equal
+# set_axes_equal(ax)
+
+mlab.show()

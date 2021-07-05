@@ -207,3 +207,9 @@ As a convention, python scripts should roughly and generally contain the followi
 The python interpreter has several implementations, the most common one by far is CPython.
 
 Use SymPy to integrate symbolic mathematical expressions.
+
+## NumPy
+
+- MATLAB employs a copy-on-write memory management system, where an array may only be copied to an ew memory location when it is modified.
+- In NumPy, slices of arrays are views to the original array. They are like instances, or shortcuts to the original variable, like pointers to the same memory address. So, if you modify that view, the original arrays is modified also. It's the same variable with different name, exactly the same variable.
+  See https://realpython.com/matlab-vs-python/#an-overview-of-basic-array-operations
