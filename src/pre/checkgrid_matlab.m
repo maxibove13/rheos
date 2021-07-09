@@ -1,5 +1,3 @@
-%GridFileName=['../rota01.grd'];
-
 function [XC, YC, ZC] = checkGridMBo8o3008(GridFileName)
 
     a = fopen([GridFileName]);

@@ -1,0 +1,53 @@
+T T T F                  LSTORE,LCALG,LPRINT,LSMOG   ' Default values
+0                        IDIR                        ' 2D section: (0 - South-North) (1 - West-East)
+100 20                   NICV NJCV                   ' 2D section: Number of cells in I, J directions
+1                        NLINES(L)                   ' 2D section: South side is made of 1 segment
++000.0000 +000.0000      XLS YLS                     ' 2D section: South side, first point (x,y)  ( South-West corner )
++001.0000 +000.0000      XLE YLE                     ' 2D section: South side, second point (x,y) ( South-East corner )
+100 1                      NSEG LTYP                 '                          number of cells in this segment (100), type of segment (1 - straight line)
+ 0.0  0.0                  DX1 EXP                   '                          size of first cell, expansion factor (both 0, uniform distribution)
+1                        NLINES(L)                   ' 2D section: North side is made of 1 segment
++000.0000 +000.1000      XLS YLS                     ' 2D section: North side, first point (x,y)  ( North-West corner ) 
++001.0000 +000.1000      XLE YLE                     ' 2D section: North side, second point (x,y) ( North-East corner )
+100 1                      NSEG LTYP                 '                          number of cells in this segment (100), type of segment (1 - straight line)
+ 0.0  0.0                  DX1 EXP                   '                          size of first cell, expansion factor (both 0, uniform distribution) 
+1                        NLINES(L)                   ' 2D section: West side is made of 1 segment
++000.0000 +000.0000      XLS YLS                     ' 2D section: West side, first point (x,y)  ( South-West corner )
++000.0000 +000.1000      XLE YLE                     ' 2D section: West side, second point (x,y) ( North-West corner )
+020 1                      NSEG LTYP                 '                         number of cells in this segment (20), type of segment (1 - straight line)
+ 0.0  0.0                  DX1 EXP                   '                         size of first cell, expansion factor (both 0, uniform distribution)
+1                        NLINES(L)                   ' 2D section: East sied, is made of 1 segment
++001.0000 +000.0000        XLS YLS                   ' 2D section: East sied, first point (x,y)  ( South-East corner ) 
++001.0000 +000.1000        XLE YLE                   ' 2D section: East side, second point (x,y) ( North-East corner )     
+020 1                      NSEG LTYP                 '                         number of cells in this segment (20), type of segment (1 - straight line)
+ 0.0  0.0                  DX1 EXP                   '                         size of first cell, expansion factor (both 0, uniform distribution)
+020                      NKCV                        ' K (Z) 3D  nodes distribution : Number of cells in K direction ' 
+0                        IROT                        ' (Extrusion in K if IROT=0 ) or (AXIS OF REVOLUTION 1-x, 2-y, 3-z) or ...
+1                        NLINES(L)                   ' K (Z) 3D  nodes distribution : Z distribution is made of 1 segment
++000.0000                XLS YLS                     ' K (Z) 3D  nodes distribution : first point (z) (Sout-West-Bottom) corner 
++000.1000                XLE YLE                     ' K (Z) 3D  nodes distribution : second point (z) (Sout-West-Top) corner
+ 20 1                      NSEG LTYP                 '                         number of cells in this segment (20), type of segment (1 - straight line)
+ 0.0  0.0                  DX1 EXP                   '                         size of first cell, expansion factor (both 0, uniform distribution)
+1                        NZREGIONS                   ' Number of Regions (1) for bottom & top topography 
+001 102 001 022           IS IE JS JE                ' First region, indexes (IS,IE),(JS,JE)
+.00 0 0 0 0 0 0             A0 A1 A2 A3 A4 A5 A6     '   Bottom topography specification z=A0+A1.x+A2.y+A3.x^2+A4.y^4+A5.x^3+A6.y^3
+.10 0 0 0 0 0 0             A0 A1 A2 A3 A4 A5 A6     '   Top topography specification    z=A0+A1.x+A2.y+A3.x^2+A4.y^4+A5.x^3+A6.y^3 
+6                        NBREGIONS                   ' Number of B.C. Regions (6) for Boundary Conditions specifications'
+001 102 001 022 001 001  IS IE JS JE KS KE (BOTTOM)  '   First region  (Bottom) indexes (IS,IE),(JS,JE),(KS,KE)
+5  3                      LBTYP                      '   First region  (Bottom) type (5-adiabatic wall) and tag (6)
+001 102 001 022 022 022  IS IE JS JE KS KE (TOP)     '   Second region (Top)    indexes (IS,IE),(JS,JE),(KS,KE)
+5  3                      LBTYP                      '   Second region (Top)    type (5-adiabatic wall) and tag (6)
+001 001 001 022 001 022  IS IE JS JE KS KE (WEST)    '   Third region  (West)   indexes (IS,IE),(JS,JE),(KS,KE)
+2  2                      LBTYP                      '   Third region  (West)   type (2-Outlet ) and tag (2)                       
+102 102 001 022 001 022  IS IE JS JE KS KE (EAST)    '   Fourth region (East)   indexes (IS,IE),(JS,JE),(KS,KE)
+10 10                     LBTYP                      '   Foruth region (East)   type (10-Interface ) and tag (10)
+001 102 001 001 001 022  IS IE JS JE KS KE (SOUTH)   '   Fifth region  (South)  indexes (IS,IE),(JS,JE),(KS,KE)
+4  3                      LBTYP                      '   Fifth region  (South)  type (4-isothermic wall) and tag (3)
+001 102 022 022 001 022  IS IE JS JE KS KE (NORTH)   '   Sixth region  (North)  indexes (IS,IE),(JS,JE),(KS,KE)
+4  4                      LBTYP                      '   Sixth region  (North)  type (4-isothermic wall) and tag (4)
+1  2  3                                              ' Direction permutation (not used)
+0. 0. 0.                                             ' Rotation around axis (not used)
++0.0 -0.7 +0.0                                       ' Origin offset (dx,dy dz)
+1.0                                                  ' Grid scaling (1.0 neutral)
+0.0                                                  ' Grid perturbation (not used)
+

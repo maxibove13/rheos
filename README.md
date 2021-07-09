@@ -1,24 +1,82 @@
-# rheo
+# rheos
 
-> Everything flows and nothing stand still.
+Ancient Greek: <em>$\rho \epsilon \omega $ (rhéō, "flow") </em>
+
+<br>
+
+> <em>Everything flows and nothing stand still.</em>
 >
 > > Heraclitus
 
-Set of scripts aimed to build one or several simulation domains to simulate at chaman flow solver, and visualize the results.
+<br>
 
-This repository contains two main directories: pre and post
+Set of scripts to build one or several domains to simulate at CHAMAN LES flow solver, and visualize the results.
 
-## pre
+<br>
 
-Build your own simulation domain with the desired geometry and export it through some files in order to run it in chaman.
-
-## post
-
-Takes the _rgc_ outputs of chaman flow solver as input and generates the desired visualization of the results.
-
-> Python where we can, C where we must
+> <em>Python where we can, C where we must</em>
 >
 > > Sergey, Larry, Craig
+
+<br>
+
+This repository contains the following directories:
+
+## samples
+
+All the simulation cases should have a folder inside this directory.
+
+### duct11
+
+Test case. Currently it only contains block grid generating files `*.gin`
+
+## src/pre
+
+Build your own simulation domain with the desired geometry and export it through some files in order to run it in CHAMAN.
+
+### Modules/Files
+
+- checkgrd
+
+  - Contains functions to read `*.grd` files containing grid information in binary.
+
+- makegrid
+
+  - Contains a function to execute grid3d.lnx program.
+
+- checkgrid_matlab
+
+  - Contains old MATLAB functions to read `*.grd` files. (Deprecated)
+
+- grid3d.lnx
+
+  - Program to compute and generate a structure grid block from `*.gin` ASCII files.
+
+- grid3d.MB.f
+
+  - Source code of grid3d.lnx
+
+## src/post
+
+Takes the outputs of CHAMAN as input and generates the desired visualization of the results.
+
+<br>
+
+### Modules
+
+- mayavi_demo
+
+  - Contains a function to test the `mayavi` library visualizing a fancy 3D function.
+
+- plotgrids
+
+  - Contains functions to plot grids.
+
+<br>
+
+The current main entry of this package is the script: `src/main_pre.py`
+
+<br>
 
 ## Installation
 
@@ -36,7 +94,7 @@ Takes the _rgc_ outputs of chaman flow solver as input and generates the desired
    pip install -r requirements.txt
    ```
 
-3. Install python matlab.engine in order to run matlab functions from python
+3. (Optionally) Install python matlab.engine in order to run matlab functions from python
 
    i. Open a matlab session and obtain the root path of matlab
 
@@ -60,13 +118,27 @@ Takes the _rgc_ outputs of chaman flow solver as input and generates the desired
 
 ## Execution
 
-1.  Activate venv
+1.  Activate `venv`
 
-```bash
-source .venv/bin/activate
-```
+    ```bash
+    source .venv/bin/activate
+    ```
 
-### venv
+<br>
+
+Currently it is only implemented the task of processing already generated `*.gin` files and visualizing them in a 3D plot using `mayavi` library.
+
+2. Run `main_pre.py` from an IDE or terminal
+
+   ```bash
+   ./src/main_pre.py
+   ```
+
+   Expect a modal window to popup and visualize your grid.
+
+## General Python recomendations
+
+## venv
 
 venv is a python utlity to create virtual environment where all the python files and packages are stored isolated from the rest of your computer.
 Different projects needs different packages and maybe different versions of those packages and even of python, so it is a good practice to isolate the python environment of your particular project or application.
@@ -155,22 +227,19 @@ As a convention, python scripts should roughly and generally contain the followi
 4. All your imports separated by three categories:
 
    ```python
-   # Generic
+   # Built-in
    import os
    import datetime
 
-   # Well-known
+   # Third-party
    import numpy
-
-   # Specifics
-   from ugtm import eGTM
 
    # Owned
    from myScript import myFunction
 
    ```
 
-## Run in Visual Studio Code
+## Python in VS Code
 
 1.  Install the [Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 
@@ -200,16 +269,16 @@ As a convention, python scripts should roughly and generally contain the followi
 
     iii. Try to format your document using the configured shortcut.
 
-    iv. When asked if install a formatter choose `black` (you can choose whatever you like actually)
+    iv. When asked whether to install a formatter choose `pep8` (you can choose whatever you like actually)
 
-## Comments
+## Comments, Tips & Reminders
 
-The python interpreter has several implementations, the most common one by far is CPython.
+- The python interpreter has several implementations, the most common one is `CPython`.
 
-Use SymPy to integrate symbolic mathematical expressions.
+- Use `SymPy` to integrate symbolic mathematical expressions.
 
-## NumPy
+- Use `ipywidgets`. You can create interactive plots and modify any variable
 
-- MATLAB employs a copy-on-write memory management system, where an array may only be copied to an ew memory location when it is modified.
-- In NumPy, slices of arrays are views to the original array. They are like instances, or shortcuts to the original variable, like pointers to the same memory address. So, if you modify that view, the original arrays is modified also. It's the same variable with different name, exactly the same variable.
-  See https://realpython.com/matlab-vs-python/#an-overview-of-basic-array-operations
+- You can prevent warnings!
+
+- `MATLAB` employs a copy-on-write memory management system, where an array may only be copied to a new memory location when it is modified. In `NumPy`, slices of arrays are views to the original array. They are like instances, or shortcuts to the original variable, like pointers to the same memory address. So, if you modify that view, the original arrays is modified also. It's the same variable with different name, exactly the same variable. See https://realpython.com/matlab-vs-python/#an-overview-of-basic-array-operations

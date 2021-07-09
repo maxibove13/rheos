@@ -8,25 +8,20 @@ __email__ = "mbove@fing.edu.uy"
 __status__ = "Prototype"
 __date__ = "07/21"
 
-# Built-in modules
-
 # Third-party modules
-# import matplotlib.pyplot as plt
-# from mpl_toolkits import mplot3d
 from mayavi import mlab
 import numpy as np
 
-# Local modules
-
 
 def initplot():
+    """Function to initialize a figure. Currently deprecated, using mayavi library."""
 
     # Create a figure
     fig = plt.figure()
 
     # Display figure
-    # plt.ion()
-    # plt.show()
+    plt.ion()
+    plt.show()
 
     # Create an axes in 3d
     ax = plt.axes(projection="3d")
@@ -37,6 +32,8 @@ def initplot():
     return plt, ax, c
 
 
+# Not in use currently as I am using mayavi and scales the coordinates by default.
+# I am not the author of this function.
 def set_axes_equal(ax):
     '''Make axes of 3D plot have equal scale so that spheres appear as spheres,
     cubes as cubes, etc..  This is one possible solution to Matplotlib's
@@ -67,6 +64,7 @@ def set_axes_equal(ax):
 
 
 def plotgrid(grid_filename, x, y, z, c):
+    """Function to plot all grid blocks in a 3D scene using mayavi library"""
 
     # Loop through the three dimensions.
     for perm in range(3):
@@ -76,11 +74,7 @@ def plotgrid(grid_filename, x, y, z, c):
         y = np.moveaxis(y, 0, -1)
         z = np.moveaxis(z, 0, -1)
 
-        # Plot x, y, z of the first and last element of the third coord (T-B, S-N, W-E for each loop)
-        # ax.plot_surface(x[:, :, 1], y[:, :, 1],
-        #                 z[:, :, 1], color=c, shade=True)
-        # ax.plot_surface(x[:, :, -1], y[:, :, -1],
-        #                 z[:, :, -1], color=c, shade=True)
+        # Plot x, y, z of the first and last element of the third coord (Top-Bottom, South-North, West-East for each loop)
         mlab.mesh(x[:, :, 0], y[:, :, 0], z[:, :, 0],
                   representation='wireframe', color=c)
         mlab.mesh(x[:, :, -1], y[:, :, -1], z[:, :, -1],
@@ -89,3 +83,8 @@ def plotgrid(grid_filename, x, y, z, c):
         # Avoid blocking the execution
         # plt.pause(0.001)
         # input("Prese [enter] to close the figure.")
+
+
+def plotshow():
+    """Function to display the mayavi scene."""
+    mlab.show()

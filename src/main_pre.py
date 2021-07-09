@@ -8,32 +8,64 @@ __email__ = "mbove@fing.edu.uy"
 __status__ = "Prototype"
 __date__ = "06/21"
 
-# Build-in modules
-
-# Third-party modules
-from mayavi import mlab
+# Built-in modules
+import glob
+import os
 
 # Local modules
-from post.plotgrid import *
+from post.plotgrid import plotgrid
+from post.plotgrid import plotshow
 from pre.checkgrd import readgrd
+from pre.makegrid import makegrd
+from pre.makegrid import rmfiles
+from post.mayavi_demo import mayavi_flower
 
-# Define the filenames containing the grid block information
-grid_filename = ["duct1A.grd", "duct1B.grd", "duct1C.grd"]
+# List all cases present in samples
+cases = next(os.walk("./samples/"))[1]
 
-# Initialize the figure
-# plt, ax, c = initplot()
+# Define the casename (the simulation casename)
+while True:
+    casename = input("Enter your case name (test case is: duct11): \n")
+    # Break loop only if casename is in cases
+    if casename in cases:
+        break
+    # Easter!
+    elif casename == "flower":
+        mayavi_flower()
+        exit(1)
+    else:
+        print("This case does not exist in /samples folder, please specify a different casename")
+
+
+# Define the case dir
+casedir = "./samples/" + casename
+
+# Generate all the *.grd file using Grid3d.MB (from all the *gin present in case folder)
+makegrd(casename)
+
+# Look for all grd files inside the case folder
+grd_names = glob.glob(casedir + '/*.grd')
 
 # Define rgb colors
-c = [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+rgb = [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+
+# Extend c length with rgb colors
+c = rgb
+while len(c) < len(grd_names):
+    c += rgb
 
 # Loop through all grid blocks
-for block in range(len(grid_filename)):
+for block in range(len(grd_names)):
+
     # Obtain the cell centers of this block from the .grd file
-    xc, yc, zc = readgrd(grid_filename[block])
-    # Plot this block
-    plotgrid(grid_filename[block], xc, yc, zc, c[block])
+    xc, yc, zc = readgrd(grd_names[block])
 
-# Set aspect ratio to equal
-# set_axes_equal(ax)
+    # Plot this block in 3d with mayavi
+    print("Ploting block: ", block+1, "| File: ", grd_names[block])
+    plotgrid(grd_names[block], xc, yc, zc, c[block])
 
-mlab.show()
+# Display all grid blocks
+plotshow()
+
+# Clean useless files
+rmfiles(casename)

@@ -15,35 +15,9 @@ import sys
 # import matlab.engine
 import numpy as np
 
-# Local modules
-
-
-def checkgrd(grid_filename):
-    '''Deprecated, use readgrd instead. Function that calls matlab function checkGridMBoo8o3008 that reads grd files containing grid blocks information.'''
-
-    # start matlab
-    eng = matlab.engine.start_matlab()
-
-    # send matlab work folder to pre directory
-    eng.cd("src/pre")
-
-    # Call matlab function that reads the .grd binary files and returns the coordinates of the cell centers
-    xc, yc, zc = eng.checkGridMBo8o3008(grid_filename, nargout=3)
-
-    # Convert coordinates returned by matlab as tuples to np.arrays
-    xc = np.asarray(xc)
-    yc = np.asarray(yc)
-    zc = np.asarray(zc)
-
-    # return cell centers coordinates
-    return xc, yc, zc
-
 
 def readgrd(grd):
-    '''Function to read <name>.grd file that contains the structured grid block information in binary format.'''
-
-    # Define the path of the file relative to this working dir
-    grd = 'src/pre/' + grd
+    """Function to read <name>.grd file that contains the structured grid block information in binary format."""
 
     # Define the number of bytes of a int32: 4
     nb_int32 = np.int32().nbytes
@@ -221,3 +195,24 @@ def readgrd_vars(nb_int32, nb_int64, nb_single, f):
     VOL = np.reshape(VOL, (NYA, NXA, NZA))
 
     return XC, YC, ZC
+
+
+def checkgrd(grid_filename):
+    """Deprecated, use readgrd instead. Function that calls MATLAB function checkGridMBoo8o3008 that reads grd files containing grid blocks information."""
+
+    # start matlab
+    eng = matlab.engine.start_matlab()
+
+    # send matlab work folder to pre directory
+    eng.cd("src/pre")
+
+    # Call matlab function that reads the .grd binary files and returns the coordinates of the cell centers
+    xc, yc, zc = eng.checkGridMBo8o3008(grid_filename, nargout=3)
+
+    # Convert coordinates returned by matlab as tuples to np.arrays
+    xc = np.asarray(xc)
+    yc = np.asarray(yc)
+    zc = np.asarray(zc)
+
+    # return cell centers coordinates
+    return xc, yc, zc
