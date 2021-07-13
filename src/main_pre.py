@@ -13,59 +13,61 @@ import glob
 import os
 
 # Local modules
-from post.plotgrid import plotgrid
-from post.plotgrid import plotshow
-from pre.checkgrd import readgrd
-from pre.makegrid import makegrd
-from pre.makegrid import rmfiles
-from post.mayavi_demo import mayavi_flower
-
-# List all cases present in samples
-cases = next(os.walk("./samples/"))[1]
-
-# Define the casename (the simulation casename)
-while True:
-    casename = input("Enter your case name (test case is: duct11): \n")
-    # Break loop only if casename is in cases
-    if casename in cases:
-        break
-    # Easter!
-    elif casename == "flower":
-        mayavi_flower()
-        exit(1)
-    else:
-        print("This case does not exist in /samples folder, please specify a different casename")
+from post.plotgrid import plotgrid, plotshow, mayavi_flower
+from pre.checkgrd import readgrd, makegrd, rmfiles
 
 
-# Define the case dir
-casedir = "./samples/" + casename
+def main_pre():
+    # List all cases present in samples
+    cases = next(os.walk("./samples/"))[1]
 
-# Generate all the *.grd file using Grid3d.MB (from all the *gin present in case folder)
-makegrd(casename)
+    # Define the casename (the simulation casename)
+    while True:
+        casename = input("Enter your case name (test case is: duct11): \n")
+        # Break loop only if casename is in cases
+        if casename in cases:
+            break
+        # Easter!
+        elif casename == "flower":
+            mayavi_flower()
+            exit(1)
+        else:
+            print(
+                "This case does not exist in /samples folder, please specify a different casename")
 
-# Look for all grd files inside the case folder
-grd_names = glob.glob(casedir + '/*.grd')
+    # Define the case dir
+    casedir = "./samples/" + casename
 
-# Define rgb colors
-rgb = [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+    # Generate all the *.grd file using Grid3d.MB (from all the *gin present in case folder)
+    makegrd(casename)
 
-# Extend c length with rgb colors
-c = rgb
-while len(c) < len(grd_names):
-    c += rgb
+    # Look for all grd files inside the case folder
+    grd_names = glob.glob(casedir + '/*.grd')
 
-# Loop through all grid blocks
-for block in range(len(grd_names)):
+    # Define rgb colors
+    rgb = [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
 
-    # Obtain the cell centers of this block from the .grd file
-    xc, yc, zc = readgrd(grd_names[block])
+    # Extend c length with rgb colors
+    c = rgb
+    while len(c) < len(grd_names):
+        c += rgb
 
-    # Plot this block in 3d with mayavi
-    print("Ploting block: ", block+1, "| File: ", grd_names[block])
-    plotgrid(grd_names[block], xc, yc, zc, c[block])
+    # Loop through all grid blocks
+    for block in range(len(grd_names)):
 
-# Display all grid blocks
-plotshow()
+        # Obtain the cell centers of this block from the .grd file
+        xc, yc, zc = readgrd(grd_names[block])
 
-# Clean useless files
-rmfiles(casename)
+        # Plot this block in 3d with mayavi
+        print("Ploting block: ", block+1, "| File: ", grd_names[block])
+        plotgrid(grd_names[block], xc, yc, zc, c[block])
+
+    # Display all grid blocks
+    plotshow()
+
+    # Clean useless files
+    rmfiles(casename)
+
+
+if __name__ == "__main__":
+    main_pre()

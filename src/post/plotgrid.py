@@ -8,8 +8,13 @@ __email__ = "mbove@fing.edu.uy"
 __status__ = "Prototype"
 __date__ = "07/21"
 
+# Built-in modules
+import time
+
 # Third-party modules
-from mayavi import mlab
+from IPython import display
+# from mayavi import mlab
+from matplotlib import pyplot as plt
 import numpy as np
 
 
@@ -32,16 +37,43 @@ def initplot():
     return plt, ax, c
 
 
-# Not in use currently as I am using mayavi and scales the coordinates by default.
-# I am not the author of this function.
+def setplot_props(x_lab, y_lab, title, grid=True):
+    """Function to set some properties of matplotlib 2D plots"""
+
+    # Display grid on canvas
+    if grid:
+        plt.grid(True)
+
+    # Set labels & title
+    plt.xlabel(x_lab)
+    plt.ylabel(y_lab)
+    plt.title(title)
+
+    # Set equal aspect ratio
+    plt.gca().set_aspect('equal', adjustable='box')
+
+
+def ifig():
+    """Update figure dynamically. Remove the previous output and display the updated one"""
+    # Clear previous output
+    display.clear_output(wait=True)
+    # Display current figure
+    fig = plt.gcf()
+    display.display(fig)
+    # Pause execution 0.1s
+    time.sleep(0.1)
+
+
 def set_axes_equal(ax):
-    '''Make axes of 3D plot have equal scale so that spheres appear as spheres,
+    # Not in use currently as I am using mayavi and scales the coordinates by default.
+    # I am not the author of this function.
+    """Make axes of 3D plot have equal scale so that spheres appear as spheres,
     cubes as cubes, etc..  This is one possible solution to Matplotlib's
     ax.set_aspect('equal') and ax.axis('equal') not working for 3D.
 
     Input
       ax: a matplotlib axis, e.g., as output from plt.gca().
-    '''
+    """
 
     x_limits = ax.get_xlim3d()
     y_limits = ax.get_ylim3d()

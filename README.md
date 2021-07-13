@@ -94,7 +94,13 @@ The current main entry of this package is the script: `src/main_pre.py`
    pip install -r requirements.txt
    ```
 
-3. (Optionally) Install python matlab.engine in order to run matlab functions from python
+3. Add your virtual environment to Jupyter (the interactive IDE)
+
+   ```bash
+   python -m ipykernel install --user --name=.venv
+   ```
+
+4. (Optionally) Install python matlab.engine in order to run matlab functions from python
 
    i. Open a matlab session and obtain the root path of matlab
 
