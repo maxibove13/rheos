@@ -240,8 +240,8 @@ As a convention, python scripts should roughly and generally contain the followi
    # Third-party
    import numpy
 
-   # Owned
-   from myScript import myFunction
+   # Local
+   from my_package.my_module import my_function
 
    ```
 
