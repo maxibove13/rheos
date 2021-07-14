@@ -1,6 +1,6 @@
 # rheos
 
-Ancient Greek: <em>$\rho \epsilon \omega $ (rhéō, "flow") </em>
+Ancient Greek: <em>ρεω (rhéō, "flow")</em>
 
 <br>
 
@@ -10,7 +10,7 @@ Ancient Greek: <em>$\rho \epsilon \omega $ (rhéō, "flow") </em>
 
 <br>
 
-Set of scripts to build one or several domains to simulate at CHAMAN LES flow solver, and visualize the results.
+Set of scripts to build a geometric domain to simulate at CHAMAN LES flow solver, and visualize the results.
 
 <br>
 
@@ -20,7 +20,83 @@ Set of scripts to build one or several domains to simulate at CHAMAN LES flow so
 
 <br>
 
+## Installation
+
+1. Create a virtual environment (See `venv` section below) in `rheos` project root folder.
+
+   i. Create venv
+
+   ```bash
+   python3 -m venv .venv
+   ```
+
+2. Install necessary dependencies via `requirements.txt`
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Add your virtual environment to Jupyter (the interactive IDE)
+
+   ```bash
+   python -m ipykernel install --user --name=.venv
+   ```
+
+4. (Optionally) Install python matlab.engine in order to run matlab functions from python
+
+   i. Open a matlab session and obtain the root path of matlab
+
+   ```matlab
+   matlabroot
+   ```
+
+   ii. Go to `matlabroot/extern/engines/python`
+
+   ```bash
+   cd matlabroot/extern/engines/python
+   ```
+
+   Note that `matlabroot` means the path to matlab obtained in step i.
+
+   iii. Install matlab.engine
+
+   ```bash
+   python setup.py install
+   ```
+
+## Execution
+
+Activate `venv`
+
+```bash
+source .venv/bin/activate
+```
+
+<br>
+
+Currently thera are only two tasks implemented:
+
+1. Process already generated `*.gin` files and visualizing them in a 3D plot using `mayavi` library.
+
+   i. Run `main_pre.py` from an IDE or terminal
+
+   ```bash
+   ./src/main_pre.py
+   ```
+
+   Expect a modal window to popup and visualize your grid.
+
+2. Generate the 2D bottom section (the surface) of a grid block.
+
+   i. Open `igrid.ipynb` in an IPython interactive IDE (Like Jupyter-Lab)
+
+   ii. Follow the steps
+
+<br>
+
 This repository contains the following directories:
+
+<br>
 
 ## samples
 
@@ -77,71 +153,6 @@ Takes the outputs of CHAMAN as input and generates the desired visualization of 
 The current main entry of this package is the script: `src/main_pre.py`
 
 <br>
-
-## Installation
-
-1. Create a virtual environment (See `venv` section below) in `rheos` project root folder.
-
-   i. Create venv
-
-   ```bash
-   python3 -m venv .venv
-   ```
-
-2. Install necessary dependencies via `requirements.txt`
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Add your virtual environment to Jupyter (the interactive IDE)
-
-   ```bash
-   python -m ipykernel install --user --name=.venv
-   ```
-
-4. (Optionally) Install python matlab.engine in order to run matlab functions from python
-
-   i. Open a matlab session and obtain the root path of matlab
-
-   ```matlab
-   matlabroot
-   ```
-
-   ii. Go to `matlabroot/extern/engines/python`
-
-   ```bash
-   cd matlabroot/extern/engines/python
-   ```
-
-   Note that `matlabroot` means the path to matlab obtained in step i.
-
-   iii. Install matlab.engine
-
-   ```bash
-   python setup.py install
-   ```
-
-## Execution
-
-1.  Activate `venv`
-
-    ```bash
-    source .venv/bin/activate
-    ```
-
-<br>
-
-Currently it is only implemented the task of processing already generated `*.gin` files and visualizing them in a 3D plot using `mayavi` library.
-
-2. Run `main_pre.py` from an IDE or terminal
-
-   ```bash
-   ./src/main_pre.py
-   ```
-
-   Expect a modal window to popup and visualize your grid.
-
 ## General Python recomendations
 
 ## venv

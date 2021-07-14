@@ -37,7 +37,7 @@ def initplot():
     return plt, ax, c
 
 
-def setplot_props(x_lab, y_lab, title, grid=True):
+def setplot_props(x_lab, y_lab, title, grid=True, figsize=(12, 8), dpi=80):
     """Function to set some properties of matplotlib 2D plots"""
 
     # Display grid on canvas
@@ -49,8 +49,13 @@ def setplot_props(x_lab, y_lab, title, grid=True):
     plt.ylabel(y_lab)
     plt.title(title)
 
+    # Set size
+    plt.rcParams["figure.figsize"] = [figsize[0], figsize[1]]
+    # Set dpi (resolution)
+    plt.rcParams["figure.dpi"] = dpi
+
     # Set equal aspect ratio
-    plt.gca().set_aspect('equal', adjustable='box')
+    plt.axis('equal')
 
 
 def ifig():

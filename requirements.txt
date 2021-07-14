@@ -1,4 +1,5 @@
-ipykernel
 numpy
-mayavi
+ipykernel
 PyQt5
+wheel
+mayavi

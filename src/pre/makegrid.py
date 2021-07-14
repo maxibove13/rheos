@@ -9,11 +9,175 @@ __status__ = "Prototype"
 __date__ = "07/21"
 
 # Built-in modules
+from dataclasses import dataclass
+from typing import List
 import os
 import glob
 
 # Third party modules
 from matplotlib import pyplot as plt
+
+# Local modules
+from post.plotgrid import ifig, setplot_props
+
+
+# Define Point, Segment & Edge as dataclasses
+
+# A point is a set of 3 floats
+@dataclass
+class Point:
+    x: float
+    y: float
+    z: float = 0.0
+
+# A segment consists of a start and an end Point
+
+
+@dataclass
+class Segment:
+    start: Point
+    end: Point
+    ncell: int
+
+# An Edge is a list of segments
+
+
+@dataclass
+class Edge:
+    name: str
+    nlines: int
+    segments: List[Segment]
+
+
+def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDIR=1):
+    """
+    Generate the surface of a grid block interactively
+
+    Parameters
+    ----------
+    edges : tuple of str
+        All the edges of the surface as a tuple of string containing its names. 
+
+    NICV : int
+        Number of cells in I direction (horizontal by default, IDIR=1)
+
+    NJCV : int
+        Number of cells in J direction (vertical by default, IDIR=1)
+
+    uniform_cells : bool
+        Whether the cells are uniform along all segments. True by default.
+
+    IDIR : int
+        Controls the direction of initial 'straight' lines.
+        If lines goes South-North: IDIR=0
+        If lines goes West-East: IDIR=0
+
+    Returns
+    -------
+
+    """
+    # Loop through edges
+    for edge in edges:
+        # Number of segments needed to describe this edge.
+        print(f"Number of {edge} edge segments:")
+        while True:
+            try:
+                nlines = int(input("NLINES: "))
+                if nlines > 0:
+                    break
+                else:
+                    print("Only positive integers values are valid. Try again")
+            except:
+                print("Only postive integers values are valid. Try again")
+
+        # Initialize this edge segments list
+        segments = []
+
+        # Loop through all segments of this edge
+        for seg in range(0, nlines):
+
+            # Coordinates (x,y) of the first point in this segment of this edge. (South-West point if first (or only) segment)
+            print(
+                f"Coordinates (x,y) of first point in segment {seg + 1} of {edge} edge")
+            # Ask user for point and plot it.
+            if nlines == 1:
+                if edge == "West":
+                    x0, y0 = south.segments[0].start.x, south.segments[0].start.y
+                elif edge == "East":
+                    x0, y0 = south.segments[0].end.x, south.segments[0].end.y
+                    print(x0, y0)
+                else:
+                    x0, y0 = input_point()
+            else:
+                x0, y0 = input_point()
+
+            # Label the point if known
+            if nlines == 1:
+                if edge == "South":
+                    plt.text(x0, y0, "SW", horizontalalignment="right")
+                elif edge == "North":
+                    plt.text(x0, y0, "NW", horizontalalignment="right")
+
+            # Call function to set some plot properties.
+            # Set xlabel, ylabel, title.
+            setplot_props("x", "y", "Bottom 2D section of block grid")
+            # Display figure
+            ifig()
+
+            # Coordinates (x,y) of this segment endpoint. (South-East point if first (or only) segment)
+            print(
+                f"Coordinates (x,y) of endpoint in segment {seg + 1} of {edge} edge")
+            # Ask user for point and plot it.
+            if nlines == 1:
+                if edge == "West":
+                    x1, y1 = north.segments[0].start.x, north.segments[0].start.y
+                elif edge == "East":
+                    x1, y1 = north.segments[0].end.x, north.segments[0].end.y
+                    print(x1, y1)
+                else:
+                    x1, y1 = input_point()
+            else:
+                x1, y1 = input_point()
+
+            # Label this point if known
+            if nlines == 1:
+                if edge == "South":
+                    plt.text(x1, y1, "SE", horizontalalignment="left")
+                elif edge == "North":
+                    plt.text(x1, y1, "NE", horizontalalignment="left")
+
+            # Plot the segment as a line
+            plt.plot([x0, x1], [y0, y1], 'b')
+
+            # Update figure
+            ifig()
+
+            # Distribution of cells along this segment (DX1, EXP):
+            if not uniform_cells:
+                # specify first cell size (dx1) or expansion (contraction) factor
+                dx1, exp = cells_distro()
+            else:
+                # uniform cells
+                dx1, exp = 0, 0
+
+            # Number of cells of this segment
+            # If this edge has only one segment, nseg is equal to NICV or NJCV
+            ncell = seg_cells(nlines, IDIR, NICV, NJCV, edge)
+
+            # Instantiate this segment
+            seg = Segment(Point(x0, y0), Point(x1, y1), ncell)
+            # Append it to this edge segments list
+            segments.append(seg)
+
+        # Instantiate this edge
+        if edge == "South":
+            south = Edge(edge, nlines, segments)
+        elif edge == "North":
+            north = Edge(edge, nlines, segments)
+        elif edge == "West":
+            west = Edge(edge, nlines, segments)
+        elif edge == "East":
+            east = Edge(edge, nlines, segments)
 
 
 def makegrd(casename):
@@ -53,22 +217,22 @@ def rmfiles(casename):
     os.system("rm *.out")
 
 
-def seg_cells(nlines, idir, nicv, njcv, edge):
+def seg_cells(nlines, IDIR, NICV, NJCV, edge):
     """Return the number of cells of this segment"""
 
     # If only one segment exists in this edge, the number of cells of this segment is equal to NICV or NJCV
     if nlines == 1:
-        if idir == 1:
+        if IDIR == 1:
             if edge == "South" or edge == "North":
-                seg_cells = nicv
+                seg_cells = NICV
             else:
-                seg_cells = njcv
-        # If straight lines goes West-East, seg_cells equals to njcv
+                seg_cells = NJCV
+        # If straight lines goes West-East, seg_cells equals to NJCV
         else:
             if edge == "South" or edge == "North":
-                seg_cells = njcv
+                seg_cells = NJCV
             else:
-                seg_cells = nicv
+                seg_cells = NICV
     else:
         print("Number of cells of this segment?")
         while True:
