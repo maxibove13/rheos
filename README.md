@@ -10,7 +10,7 @@ Ancient Greek: <em>ρεω (rhéō, "flow")</em>
 
 <br>
 
-Set of scripts to build a geometric domain to simulate at CHAMAN LES flow solver, and visualize the results.
+### Program aimed to build a block grid simulation domain for later use in a flow simulation in caffa3d LES-CFD and visualize the resulting fields.
 
 <br>
 
@@ -94,65 +94,66 @@ Currently thera are only two tasks implemented:
 
 <br>
 
-This repository contains the following directories:
+## Directories
 
 <br>
 
-## samples
+### samples
 
 All the simulation cases should have a folder inside this directory.
 
-### duct11
+- duct11
 
-Test case. Currently it only contains block grid generating files `*.gin`
+  Test case. Currently it only contains block grid generating files `*.gin`
 
-## src/pre
+### src/pre
 
 Build your own simulation domain with the desired geometry and export it through some files in order to run it in CHAMAN.
 
-### Modules/Files
+- Modules/Files
 
-- checkgrd
+  - checkgrd
 
-  - Contains functions to read `*.grd` files containing grid information in binary.
+    Contains functions to read `*.grd` files containing grid information in binary.
 
-- makegrid
+  - makegrid
 
-  - Contains a function to execute grid3d.lnx program.
+    Contains a function to execute grid3d.lnx program.
 
-- checkgrid_matlab
+  - checkgrid_matlab
 
-  - Contains old MATLAB functions to read `*.grd` files. (Deprecated)
+    Contains old MATLAB functions to read `*.grd` files. (Deprecated)
 
-- grid3d.lnx
+  - grid3d.lnx
 
-  - Program to compute and generate a structure grid block from `*.gin` ASCII files.
+    Program to compute and generate a structure grid block from `*.gin` ASCII files.
 
-- grid3d.MB.f
+  - grid3d.MB.f
 
-  - Source code of grid3d.lnx
+    Source code of grid3d.lnx
 
-## src/post
+### src/post
 
 Takes the outputs of CHAMAN as input and generates the desired visualization of the results.
 
 <br>
 
-### Modules
+- Modules
 
-- mayavi_demo
+  - mayavi_demo
 
-  - Contains a function to test the `mayavi` library visualizing a fancy 3D function.
+    Contains a function to test the `mayavi` library visualizing a fancy 3D function.
 
-- plotgrids
+  - plotgrids
 
-  - Contains functions to plot grids.
+    Contains functions to plot grids.
 
 <br>
 
 The current main entry of this package is the script: `src/main_pre.py`
 
 <br>
+
 ## General Python recomendations
 
 ## venv
