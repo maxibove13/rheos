@@ -49,7 +49,7 @@ class Edge:
     segments: List[Segment]
 
 
-def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDIR=1):
+def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDIR=1, fig_size: tuple = (14, 10)):
     """
     Generate the surface of a grid block interactively
 
@@ -72,10 +72,17 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
         If lines goes South-North: IDIR=0
         If lines goes West-East: IDIR=0
 
+    fig_size : tuple of int
+        Figure size as a tuple of ints (represents pixels)
+
     Returns
     -------
 
     """
+
+    # Initialize figure and axes
+    fig, ax = plt.subplots(figsize=fig_size)
+
     # Loop through edges
     for edge in edges:
         # Number of segments needed to describe this edge.
@@ -107,22 +114,22 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
                     x0, y0 = south.segments[0].end.x, south.segments[0].end.y
                     print(x0, y0)
                 else:
-                    x0, y0 = input_point()
+                    x0, y0 = input_point(ax)
             else:
-                x0, y0 = input_point()
+                x0, y0 = input_point(ax)
 
             # Label the point if known
             if nlines == 1:
                 if edge == "South":
-                    plt.text(x0, y0, "SW", horizontalalignment="right")
+                    ax.text(x0, y0, "SW", horizontalalignment="right")
                 elif edge == "North":
-                    plt.text(x0, y0, "NW", horizontalalignment="right")
+                    ax.text(x0, y0, "NW", horizontalalignment="right")
 
             # Call function to set some plot properties.
             # Set xlabel, ylabel, title.
-            setplot_props("x", "y", "Bottom 2D section of block grid")
+            setplot_props(ax, "x", "y", "Bottom 2D section of block grid")
             # Display figure
-            ifig()
+            ifig(fig)
 
             # Coordinates (x,y) of this segment endpoint. (South-East point if first (or only) segment)
             print(
@@ -135,22 +142,22 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
                     x1, y1 = north.segments[0].end.x, north.segments[0].end.y
                     print(x1, y1)
                 else:
-                    x1, y1 = input_point()
+                    x1, y1 = input_point(ax)
             else:
-                x1, y1 = input_point()
+                x1, y1 = input_point(ax)
 
             # Label this point if known
             if nlines == 1:
                 if edge == "South":
-                    plt.text(x1, y1, "SE", horizontalalignment="left")
+                    ax.text(x1, y1, "SE", horizontalalignment="left")
                 elif edge == "North":
-                    plt.text(x1, y1, "NE", horizontalalignment="left")
+                    ax.text(x1, y1, "NE", horizontalalignment="left")
 
             # Plot the segment as a line
-            plt.plot([x0, x1], [y0, y1], 'b')
+            ax.plot([x0, x1], [y0, y1], 'b')
 
             # Update figure
-            ifig()
+            ifig(fig)
 
             # Distribution of cells along this segment (DX1, EXP):
             if not uniform_cells:
@@ -245,7 +252,7 @@ def seg_cells(nlines, IDIR, NICV, NJCV, edge):
     return seg_cells
 
 
-def input_point():
+def input_point(ax):
     """Ask user for (x,y) coordinates of a point and plot it."""
 
     # Ask user for (x,y) coordinates of the point.
@@ -258,7 +265,7 @@ def input_point():
             print("x and y must be numeric. Try again.")
 
     # Plot the point
-    fig = plt.plot(x, y, 'ro')
+    ax.plot(x, y, 'ro')
 
     return x, y
 

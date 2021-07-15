@@ -13,8 +13,10 @@ import glob
 import os
 
 # Local modules
-from post.plotgrid import plotgrid, plotshow, mayavi_flower
-from pre.checkgrd import readgrd, makegrd, rmfiles
+from post.plotgrid import plotgrid, plotshow
+from post.mayavi_demo import mayavi_flower
+from pre.checkgrd import readgrd
+from pre.makegrid import makegrd, rmfiles
 
 
 def main_pre():

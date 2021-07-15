@@ -13,31 +13,12 @@ import time
 
 # Third-party modules
 from IPython import display
-# from mayavi import mlab
+from mayavi import mlab
 from matplotlib import pyplot as plt
 import numpy as np
 
 
-def initplot():
-    """Function to initialize a figure. Currently deprecated, using mayavi library."""
-
-    # Create a figure
-    fig = plt.figure()
-
-    # Display figure
-    plt.ion()
-    plt.show()
-
-    # Create an axes in 3d
-    ax = plt.axes(projection="3d")
-
-    # Colors available
-    c = 'rbgcm'
-
-    return plt, ax, c
-
-
-def setplot_props(x_lab, y_lab, title, grid=True, figsize=(12, 8), dpi=80):
+def setplot_props(ax, x_lab, y_lab, title, grid=True):
     """Function to set some properties of matplotlib 2D plots"""
 
     # Display grid on canvas
@@ -45,25 +26,25 @@ def setplot_props(x_lab, y_lab, title, grid=True, figsize=(12, 8), dpi=80):
         plt.grid(True)
 
     # Set labels & title
-    plt.xlabel(x_lab)
-    plt.ylabel(y_lab)
-    plt.title(title)
+    ax.set_xlabel(x_lab)
+    ax.set_ylabel(y_lab)
+    ax.set_title(title)
 
-    # Set size
-    plt.rcParams["figure.figsize"] = [figsize[0], figsize[1]]
-    # Set dpi (resolution)
-    plt.rcParams["figure.dpi"] = dpi
+    # # Set size
+    # plt.rcParams["figure.figsize"] = [figsize[0], figsize[1]]
+    # # Set dpi (resolution)
+    # plt.rcParams["figure.dpi"] = dpi
 
     # Set equal aspect ratio
-    plt.axis('equal')
+    ax.set_aspect('equal')
+    ax.axis('equal')
 
 
-def ifig():
+def ifig(fig):
     """Update figure dynamically. Remove the previous output and display the updated one"""
     # Clear previous output
     display.clear_output(wait=True)
     # Display current figure
-    fig = plt.gcf()
     display.display(fig)
     # Pause execution 0.1s
     time.sleep(0.1)
