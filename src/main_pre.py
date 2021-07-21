@@ -61,7 +61,7 @@ def main_pre():
         xc, yc, zc = readgrd(grd_names[block])
 
         # Plot this block in 3d with mayavi
-        print("Ploting block: ", block+1, "| File: ", grd_names[block])
+        print(f"Ploting block: {block + 1} | File: {grd_names[block]}")
         plotgrid(grd_names[block], xc, yc, zc, c[block])
 
     # Display all grid blocks

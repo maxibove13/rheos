@@ -13,12 +13,12 @@ import time
 
 # Third-party modules
 from IPython import display
-from mayavi import mlab
+from mayavi.mlab import mesh, show
 from matplotlib import pyplot as plt
 import numpy as np
 
 
-def setplot_props(ax, x_lab, y_lab, title, grid=True):
+def setplot_props(ax, x_lab, y_lab, title, grid=False):
     """Function to set some properties of matplotlib 2D plots"""
 
     # Display grid on canvas
@@ -93,10 +93,10 @@ def plotgrid(grid_filename, x, y, z, c):
         z = np.moveaxis(z, 0, -1)
 
         # Plot x, y, z of the first and last element of the third coord (Top-Bottom, South-North, West-East for each loop)
-        mlab.mesh(x[:, :, 0], y[:, :, 0], z[:, :, 0],
-                  representation='wireframe', color=c)
-        mlab.mesh(x[:, :, -1], y[:, :, -1], z[:, :, -1],
-                  representation='wireframe', color=c)
+        mesh(x[:, :, 0], y[:, :, 0], z[:, :, 0],
+             representation='wireframe', color=c)
+        mesh(x[:, :, -1], y[:, :, -1], z[:, :, -1],
+             representation='wireframe', color=c)
 
         # Avoid blocking the execution
         # plt.pause(0.001)
@@ -105,4 +105,4 @@ def plotgrid(grid_filename, x, y, z, c):
 
 def plotshow():
     """Function to display the mayavi scene."""
-    mlab.show()
+    show()

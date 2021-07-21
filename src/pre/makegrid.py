@@ -16,6 +16,7 @@ import glob
 
 # Third party modules
 from matplotlib import pyplot as plt
+import numpy as np
 
 # Local modules
 from post.plotgrid import ifig, setplot_props
@@ -38,6 +39,7 @@ class Segment:
     start: Point
     end: Point
     ncell: int
+    nodes: List[Point]
 
 # An Edge is a list of segments
 
@@ -48,8 +50,11 @@ class Edge:
     nlines: int
     segments: List[Segment]
 
+    def __repr__(self):
+        return f"{self.name}"
 
-def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDIR=1, fig_size: tuple = (14, 10)):
+
+def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDIR: int = 1, fig_size: tuple = (14, 10)):
     """
     Generate the surface of a grid block interactively
 
@@ -77,6 +82,14 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
 
     Returns
     -------
+    south: Edge
+
+    north: Edge
+
+    west: Edge
+
+    east: Edge
+
 
     """
 
@@ -114,9 +127,19 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
                     x0, y0 = south.segments[0].end.x, south.segments[0].end.y
                     print(x0, y0)
                 else:
-                    x0, y0 = input_point(ax)
+                    # Ask user for coordinates of segment start point only if it is the first one
+                    if seg == 0:
+                        x0, y0 = input_point(ax)
+                    # Otherwise, the endpoint of the previous segment must be the start of this one
+                    else:
+                        x0, y0 = x1, y1
             else:
-                x0, y0 = input_point(ax)
+                # Ask user for coordinates of segment start point only if it is the first one
+                if seg == 0:
+                    x0, y0 = input_point(ax)
+                # Otherwise, the endpoint of the previous segment must be the start of this one
+                else:
+                    x0, y0 = x1, y1
 
             # Label the point if known
             if nlines == 1:
@@ -156,9 +179,6 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
             # Plot the segment as a line
             ax.plot([x0, x1], [y0, y1], 'b')
 
-            # Update figure
-            ifig(fig)
-
             # Distribution of cells along this segment (DX1, EXP):
             if not uniform_cells:
                 # specify first cell size (dx1) or expansion (contraction) factor
@@ -171,20 +191,61 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
             # If this edge has only one segment, nseg is equal to NICV or NJCV
             ncell = seg_cells(nlines, IDIR, NICV, NJCV, edge)
 
-            # Instantiate this segment
-            seg = Segment(Point(x0, y0), Point(x1, y1), ncell)
+            # Get coordinates of this segment nodes
+            x_cells = np.linspace(x0, x1, ncell)
+            y_cells = np.linspace(y0, y1, ncell)
+
+            # Create a nodes list
+            nodes = []
+            for node in range(0, ncell):
+                nodes.append(Point(x_cells[node], y_cells[node]))
+
+            # Create a segment object
+            seg = Segment(Point(x0, y0), Point(x1, y1), ncell, nodes)
+
             # Append it to this edge segments list
             segments.append(seg)
+
+            # If the segment is <45° in a cartesian grid, represent the nodes as a vertical line, otherwise as a horizontal line.
+            if (seg.end.x - seg.start.x) >= (seg.end.y - seg.start.y):
+                marker = '|'
+            else:
+                marker = '_'
+            # Plot the nodes
+            ax.plot(x_cells, y_cells, 'k' + marker)
+
+            # Update figure
+            ifig(fig)
 
         # Instantiate this edge
         if edge == "South":
             south = Edge(edge, nlines, segments)
+
         elif edge == "North":
             north = Edge(edge, nlines, segments)
+
+            # Link the nodes
+            for node in range(north.segments[0].ncell):
+                a = south.segments[0].nodes[node]
+                b = north.segments[0].nodes[node]
+                ax.plot([a.x, b.x], [a.y, b.y], 'k-', linewidth=0.3)
+
         elif edge == "West":
             west = Edge(edge, nlines, segments)
+
         elif edge == "East":
             east = Edge(edge, nlines, segments)
+
+            # Link the nodes
+            for node in range(east.segments[0].ncell):
+                a = west.segments[0].nodes[node]
+                b = east.segments[0].nodes[node]
+                ax.plot([a.x, b.x], [a.y, b.y], 'k-', linewidth=0.3)
+
+        # Update figure
+        ifig(fig)
+
+    return south, north, west, east
 
 
 def makegrd(casename):

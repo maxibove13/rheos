@@ -84,7 +84,9 @@ Currently thera are only two tasks implemented:
    ./src/main_pre.py
    ```
 
-   Expect a modal window to popup and visualize your grid.
+   ii. Enter your casename.
+
+   iii. Expect a modal window to popup and visualize your grid. ()
 
 2. Generate the 2D bottom section (the surface) of a grid block.
 
