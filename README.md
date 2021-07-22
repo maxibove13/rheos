@@ -218,6 +218,35 @@ If such a file is present in your project, you can install all the dependencies 
 pip install -r requirements.txt
 ```
 
+## Jupyter extensions
+
+Fundamentally, JupyterLab is designed as an extensible environment. JuyterLab extensions can customize or enhance any part of JupyterLab.
+See more here: https://jupyterlab.readthedocs.io/en/stable/user/extensions.html#installing-extensions
+
+1.  List existing extensions
+
+    ```bash
+    jupyter labextension list
+    ```
+
+2.  Install an extension
+
+    ```bash
+    jupyter labextension install <my-extension>
+    ```
+
+3.  Uninstall an extension
+
+    ```bash
+    jupyter labextension uninstall <my-extension>
+    ```
+
+4.  Rebuild Jupyter
+
+    ```bash
+    jupyter lab build
+    ```
+
 ## Headers
 
 As a convention, python scripts should roughly and generally contain the following (ultimately is up to the programmer):

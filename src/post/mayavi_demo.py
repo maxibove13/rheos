@@ -8,7 +8,7 @@ __email__ = "mbove@fing.edu.uy"
 __status__ = "Prototype"
 __date__ = "07/21"
 
-# from mayavi.mlab import mesh, show
+from mayavi.mlab import mesh, show
 from numpy import pi, sin, cos, mgrid
 
 

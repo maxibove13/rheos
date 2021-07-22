@@ -13,7 +13,7 @@ import glob
 import os
 
 # Local modules
-from post.plotgrid import plotgrid, plotshow
+from post.plot3d import plotgrid, plotshow
 from post.mayavi_demo import mayavi_flower
 from pre.checkgrd import readgrd
 from pre.makegrid import makegrd, rmfiles

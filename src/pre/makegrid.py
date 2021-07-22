@@ -19,7 +19,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 # Local modules
-from post.plotgrid import ifig, setplot_props
+from post.plot2d import ifig, setplot_props
 
 
 # Define Point, Segment & Edge as dataclasses
@@ -54,7 +54,13 @@ class Edge:
         return f"{self.name}"
 
 
-def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDIR: int = 1, fig_size: tuple = (14, 10)):
+@dataclass
+class Block:
+    name: str
+    edges: List[Edge]
+
+
+def makesurf(edges: tuple, NICV: int, NJCV: int, block_name: str, uniform_cells: bool = True, IDIR: int = 1, fig_size: tuple = (14, 10)):
     """
     Generate the surface of a grid block interactively
 
@@ -69,6 +75,9 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
     NJCV : int
         Number of cells in J direction (vertical by default, IDIR=1)
 
+    block_name: str
+        This block name.
+
     uniform_cells : bool
         Whether the cells are uniform along all segments. True by default.
 
@@ -82,14 +91,8 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
 
     Returns
     -------
-    south: Edge
-
-    north: Edge
-
-    west: Edge
-
-    east: Edge
-
+    block: Block
+``
 
     """
 
@@ -150,7 +153,8 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
 
             # Call function to set some plot properties.
             # Set xlabel, ylabel, title.
-            setplot_props(ax, "x", "y", "Bottom 2D section of block grid")
+            setplot_props(
+                ax, "x", "y", f"Bottom 2D section of block {block_name}")
             # Display figure
             ifig(fig)
 
@@ -177,7 +181,7 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
                     ax.text(x1, y1, "NE", horizontalalignment="left")
 
             # Plot the segment as a line
-            ax.plot([x0, x1], [y0, y1], 'b')
+            ax.plot([x0, x1], [y0, y1], 'k')
 
             # Distribution of cells along this segment (DX1, EXP):
             if not uniform_cells:
@@ -245,7 +249,8 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, uniform_cells: bool = True, IDI
         # Update figure
         ifig(fig)
 
-    return south, north, west, east
+    # Return a block object with this edges.
+    return Block(block_name, [south, north, west, east])
 
 
 def makegrd(casename):
