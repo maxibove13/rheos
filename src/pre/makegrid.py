@@ -16,6 +16,7 @@ import glob
 
 # Third party modules
 from matplotlib import pyplot as plt
+from matplotlib.patches import Arc
 import numpy as np
 
 # Local modules
@@ -31,14 +32,15 @@ class Point:
     y: float
     z: float = 0.0
 
-# A segment consists of a start and an end Point
+# A segment consists of a start, an end Point, a boolean specifying if it's an arc (only half circunference), the number of nodes and the list of nodes.
 
 
 @dataclass
 class Segment:
     start: Point
     end: Point
-    ncell: int
+    arc: bool
+    nnodes: int
     nodes: List[Point]
 
 # An Edge is a list of segments
@@ -99,9 +101,12 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, block_name: str, uniform_cells:
     # Initialize figure and axes
     fig, ax = plt.subplots(figsize=fig_size)
 
+    # Is there any arc?
+    arc_in_edge = False
+
     # Loop through edges
     for edge in edges:
-        # Number of segments needed to describe this edge.
+        # Ask for number of segments needed to describe this edge.
         print(f"Number of {edge} edge segments:")
         while True:
             try:
@@ -119,37 +124,41 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, block_name: str, uniform_cells:
         # Loop through all segments of this edge
         for seg in range(0, nlines):
 
+            # Number of cells of this segment
+            # If this edge has only one segment, nseg is equal to NICV or NJCV
+            nnodes = seg_cells(nlines, IDIR, NICV, NJCV, edge)
+
             # Coordinates (x,y) of the first point in this segment of this edge. (South-West point if first (or only) segment)
             print(
                 f"Coordinates (x,y) of first point in segment {seg + 1} of {edge} edge")
             # Ask user for point and plot it.
-            if nlines == 1:
+            if nlines == 1 and not arc_in_edge:
                 if edge == "West":
-                    x0, y0 = south.segments[0].start.x, south.segments[0].start.y
+                    x1, y1 = south.segments[0].start.x, south.segments[0].start.y
                 elif edge == "East":
-                    x0, y0 = south.segments[0].end.x, south.segments[0].end.y
-                    print(x0, y0)
+                    x1, y1 = south.segments[0].end.x, south.segments[0].end.y
+                    print(x1, y1)
                 else:
                     # Ask user for coordinates of segment start point only if it is the first one
                     if seg == 0:
-                        x0, y0 = input_point(ax)
+                        x1, y1 = input_point(ax)
                     # Otherwise, the endpoint of the previous segment must be the start of this one
                     else:
-                        x0, y0 = x1, y1
+                        x1, y1 = x2, y2
             else:
                 # Ask user for coordinates of segment start point only if it is the first one
                 if seg == 0:
-                    x0, y0 = input_point(ax)
+                    x1, y1 = input_point(ax)
                 # Otherwise, the endpoint of the previous segment must be the start of this one
                 else:
-                    x0, y0 = x1, y1
+                    x1, y1 = x2, y2
 
             # Label the point if known
-            if nlines == 1:
+            if nlines == 1 and not arc_in_edge:
                 if edge == "South":
-                    ax.text(x0, y0, "SW", horizontalalignment="right")
+                    ax.text(x1, y1, "SW", horizontalalignment="right")
                 elif edge == "North":
-                    ax.text(x0, y0, "NW", horizontalalignment="right")
+                    ax.text(x1, y1, "NW", horizontalalignment="right")
 
             # Call function to set some plot properties.
             # Set xlabel, ylabel, title.
@@ -162,26 +171,57 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, block_name: str, uniform_cells:
             print(
                 f"Coordinates (x,y) of endpoint in segment {seg + 1} of {edge} edge")
             # Ask user for point and plot it.
-            if nlines == 1:
+            if nlines == 1 and not arc_in_edge:
                 if edge == "West":
-                    x1, y1 = north.segments[0].start.x, north.segments[0].start.y
+                    x2, y2 = north.segments[0].start.x, north.segments[0].start.y
                 elif edge == "East":
-                    x1, y1 = north.segments[0].end.x, north.segments[0].end.y
-                    print(x1, y1)
+                    x2, y2 = north.segments[0].end.x, north.segments[0].end.y
+                    print(x2, y2)
                 else:
-                    x1, y1 = input_point(ax)
+                    x2, y2 = input_point(ax)
             else:
-                x1, y1 = input_point(ax)
+                x2, y2 = input_point(ax)
+
+            # Create points objects
+            p1 = Point(x1, y1)
+            p2 = Point(x2, y2)
 
             # Label this point if known
             if nlines == 1:
                 if edge == "South":
-                    ax.text(x1, y1, "SE", horizontalalignment="left")
+                    ax.text(x2, y2, "SE", horizontalalignment="left")
                 elif edge == "North":
-                    ax.text(x1, y1, "NE", horizontalalignment="left")
+                    ax.text(x2, y2, "NE", horizontalalignment="left")
 
-            # Plot the segment as a line
-            ax.plot([x0, x1], [y0, y1], 'k')
+            # Ask user if segment is a straight line or arc (half circumference only)
+            while True:
+                is_arc = input("Is this segment an arc? (half circumference only) y/n")
+                if is_arc == "y":
+                    arc = True
+                    arc_in_edge = True
+                    while True:
+                        try:
+                            arc_dir = int(input("Specify the direction of the arc (-90 or 90 degrees)"))
+                            print(arc_dir)
+                            if arc_dir == 90 or arc_dir == -90:
+                                break
+                            else:
+                                print("Only 90 or -90 int values accepted. Try again.")
+                        except:
+                            print("Only 90 or -90 int values accepted. Try again.")
+                    break
+                elif is_arc == "n":
+                    arc = False
+                    break
+                else:
+                    print("Only y/n answers. Try again.")
+
+
+            # Plot the segment as a line or as an arc
+            if arc:
+                p_m_arc, nodes = build_arc(p1, p2, arc_dir, ax, nnodes)
+            else:
+                ax.plot([x1, x2], [y1, y2], 'k')
 
             # Distribution of cells along this segment (DX1, EXP):
             if not uniform_cells:
@@ -191,21 +231,20 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, block_name: str, uniform_cells:
                 # uniform cells
                 dx1, exp = 0, 0
 
-            # Number of cells of this segment
-            # If this edge has only one segment, nseg is equal to NICV or NJCV
-            ncell = seg_cells(nlines, IDIR, NICV, NJCV, edge)
+            # Get nodes if segment is a straight line
+            # If segment is an arc nodes are already defined
+            if not arc:
+                # Get coordinates of this segment nodes
+                x_cells = np.linspace(x1, x2, nnodes)
+                y_cells = np.linspace(y1, y2, nnodes)
 
-            # Get coordinates of this segment nodes
-            x_cells = np.linspace(x0, x1, ncell)
-            y_cells = np.linspace(y0, y1, ncell)
-
-            # Create a nodes list
-            nodes = []
-            for node in range(0, ncell):
-                nodes.append(Point(x_cells[node], y_cells[node]))
+                # Create a nodes list
+                nodes = []
+                for node in range(0, nnodes):
+                    nodes.append(Point(x_cells[node], y_cells[node]))
 
             # Create a segment object
-            seg = Segment(Point(x0, y0), Point(x1, y1), ncell, nodes)
+            seg = Segment(p1, p2, arc, nnodes, nodes)
 
             # Append it to this edge segments list
             segments.append(seg)
@@ -216,7 +255,8 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, block_name: str, uniform_cells:
             else:
                 marker = '_'
             # Plot the nodes
-            ax.plot(x_cells, y_cells, 'k' + marker)
+            for node in range(0, nnodes):
+                ax.plot(seg.nodes[node].x, seg.nodes[node].y, 'k' + marker)
 
             # Update figure
             ifig(fig)
@@ -228,11 +268,22 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, block_name: str, uniform_cells:
         elif edge == "North":
             north = Edge(edge, nlines, segments)
 
-            # Link the nodes
-            for node in range(north.segments[0].ncell):
-                a = south.segments[0].nodes[node]
-                b = north.segments[0].nodes[node]
-                ax.plot([a.x, b.x], [a.y, b.y], 'k-', linewidth=0.3)
+            # Link the nodes visually (plot the mesh)
+            if arc_in_edge:
+                while True:
+                    as_arc = input("Link segment nodes as an arc? y/n")
+                    if as_arc == "y":
+                        for node in range(north.segments[0].nnodes):
+                            a = south.segments[0].nodes[node]
+                            b = north.segments[0].nodes[nnodes-1-node]                        
+                            _, _ = build_arc(a, b, arc_dir, ax, nnodes, build_nodes=False)
+                        break
+                    elif as_arc == "n":
+                        for node in range(north.segments[0].nnodes):
+                            a = south.segments[0].nodes[node]
+                            b = north.segments[0].nodes[node]
+                            ax.plot([a.x, b.x], [a.y, b.y], 'k-', linewidth=0.3)
+                        break
 
         elif edge == "West":
             west = Edge(edge, nlines, segments)
@@ -241,10 +292,23 @@ def makesurf(edges: tuple, NICV: int, NJCV: int, block_name: str, uniform_cells:
             east = Edge(edge, nlines, segments)
 
             # Link the nodes
-            for node in range(east.segments[0].ncell):
-                a = west.segments[0].nodes[node]
-                b = east.segments[0].nodes[node]
-                ax.plot([a.x, b.x], [a.y, b.y], 'k-', linewidth=0.3)
+
+
+            if arc_in_edge:
+                while True:
+                    as_arc = input("Link segment nodes as an arc? y/n")
+                    if as_arc == "y":
+                        for node in range(east.segments[0].nnodes):
+                            a = west.segments[0].nodes[node]
+                            b = east.segments[0].nodes[nnodes-1-node] 
+                            _, _ = build_arc(a, b, arc_dir, ax, nnodes, build_nodes=False)
+                        break
+                    elif as_arc == "n":
+                        for node in range(north.segments[0].nnodes):
+                            a = west.segments[0].nodes[node]
+                            b = east.segments[0].nodes[node]
+                            ax.plot([a.x, b.x], [a.y, b.y], 'k-', linewidth=0.3)
+                        break
 
         # Update figure
         ifig(fig)
@@ -277,17 +341,6 @@ def makegrd(casename):
 
     # go back to root dir
     os.chdir("../../")
-
-
-def rmfiles(casename):
-    """Function to remove useless files at the end of the execution"""
-
-    # Go to samples/case folder
-    os.chdir("./samples/" + casename)
-
-    # Remove *.grd and *.out files
-    os.system("rm *.grd")
-    os.system("rm *.out")
 
 
 def seg_cells(nlines, IDIR, NICV, NJCV, edge):
@@ -370,3 +423,97 @@ def cells_distro():
         exp = 0
 
     return dx1, exp
+
+def build_arc(p1, p2, arc_dir, ax, n, build_nodes=True):
+    """
+    Find the arc (half-circumference) given two points in a 2D plane. Here we need to define the angle to draw the arc and its middle point to generate the *.grd file.
+
+    Parameters
+    ----------
+    p1 : Point
+        First point to construct the arc 
+
+    p2 : Point
+        Second point to construct the arc
+
+    arc_dir : int
+        Specifiy the direction of the arc (-90 or 90 degrees)
+
+    ax: matplotlib.axes._subplots.AxesSubplot
+        Ax of current figure being displayed
+
+    n: int
+        Number of nodes of segment
+
+    Returns
+    -------
+    p_m_arc: Point
+        Arc middle point. Needed in *.gin file
+
+    nodes: List[Point]
+        List of all nodes as Points
+``
+    """
+
+    # Middle point between p1 and p2
+    p_m = Point(p1.x + (p2.x-p1.x)/2,(p2.y-p1.y)/2 + p1.y)
+    # Diameter of the circumference with center in p_m
+    d = np.sqrt((p_m.x-p1.x)**2 + (p_m.y-p1.y)**2)*2
+
+    # Find an angle relative to a cartesian grid
+    cat_op = np.absolute(p_m.x-p1.x)
+    hip = d/2
+    alpha = np.rad2deg(np.arcsin(cat_op/hip))
+
+    # Find the middle point of the arc
+    if (p2.y-p1.y) != 0:
+        # Slope of line perpendicular to the straight segment between p1 and p2
+        m = -(p2.x-p1.x)/(p2.y-p1.y)
+        # x of point at a d/2 distance of p_m
+        x_m_arc = p_m.x - (d/2)/np.sqrt(1+m**2)
+        # y of point at a d/2 distance of p_m
+        y_m_arc = m*x_m_arc + p_m.y - m*p_m.x
+        # Create the point
+        p_m_arc = Point(x_m_arc, y_m_arc)
+    else:
+        p_m_arc = Point(p_m.x,p_m.y-d/2)
+
+    if p2.x > p1.x:
+        if p2.y > p1.y:
+            theta = - alpha + arc_dir
+        else:
+            theta = alpha + arc_dir
+    else:
+        if p2.y > p1.y:
+            theta = alpha + arc_dir
+        elif p2.y == p1.y:
+            theta = alpha + arc_dir
+        else:
+            theta = - alpha + arc_dir
+
+    ax.add_patch(Arc((p_m.x,p_m.y), d, d, theta1=theta, theta2=theta+180));
+
+    # Initialize nodes list
+    nodes = []
+    if build_nodes:
+        for i in range(0, n):
+            # The nodes are distributed evenly along the arc length
+            s = ((np.pi * (d / 2)) / n) * i
+
+            # this node angle
+            beta = np.rad2deg(s / (d / 2))
+
+            # Some of all angles of triangle (p_m.x-p1.x)^(d/2)^(p_m.y-p1.y) is 180°
+            gamma = 180 - 90 - alpha
+
+            # Coordinates of node
+            x_node = p_m.x - np.cos(np.deg2rad(beta + gamma)) * (d / 2)
+            y_node = p_m.y - np.sin(np.deg2rad(beta + gamma)) * (d / 2)
+
+
+            # Append node Point to node list
+            nodes.append(Point(x_node, y_node))
+
+    return p_m_arc, nodes
+    
+

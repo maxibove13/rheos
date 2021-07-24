@@ -1,5 +1,4 @@
 numpy
 ipykernel
 PyQt5
-wheel
 mayavi

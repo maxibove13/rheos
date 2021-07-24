@@ -16,7 +16,8 @@ import os
 from post.plot3d import plotgrid, plotshow
 from post.mayavi_demo import mayavi_flower
 from pre.checkgrd import readgrd
-from pre.makegrid import makegrd, rmfiles
+from pre.makegrid import makegrd
+from tools.files_manager import rmfiles
 
 
 def main_pre():

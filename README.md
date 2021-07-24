@@ -22,47 +22,79 @@ Ancient Greek: <em>ρεω (rhéō, "flow")</em>
 
 ## Installation
 
-1. Create a virtual environment (See `venv` section below) in `rheos` project root folder.
+0. Install VTK for python3:
 
-   i. Create venv
+```bash
+sudo apt-get install python3-vtk
+```
 
-   ```bash
-   python3 -m venv .venv
-   ```
+I. pip
 
-2. Install necessary dependencies via `requirements.txt`
+1.  Create a virtual environment (See `venv` section below) in `rheos` project root folder.
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+    i. Create venv
 
-3. Add your virtual environment to Jupyter (the interactive IDE)
+    ```bash
+    python3 -m venv .venv
+    ```
 
-   ```bash
-   python -m ipykernel install --user --name=.venv
-   ```
+2.  Install necessary dependencies via `requirements.txt`
 
-4. (Optionally) Install python matlab.engine in order to run matlab functions from python
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-   i. Open a matlab session and obtain the root path of matlab
+3.  Add your virtual environment to Jupyter (the interactive IDE)
 
-   ```matlab
-   matlabroot
-   ```
+    ```bash
+    python -m ipykernel install --user --name=.venv
+    ```
 
-   ii. Go to `matlabroot/extern/engines/python`
+4.  (Optionally) Install python matlab.engine in order to run matlab functions from python
 
-   ```bash
-   cd matlabroot/extern/engines/python
-   ```
+    i. Open a matlab session and obtain the root path of matlab
 
-   Note that `matlabroot` means the path to matlab obtained in step i.
+    ```matlab
+    matlabroot
+    ```
 
-   iii. Install matlab.engine
+    ii. Go to `matlabroot/extern/engines/python`
 
-   ```bash
-   python setup.py install
-   ```
+    ```bash
+    cd matlabroot/extern/engines/python
+    ```
+
+    Note that `matlabroot` means the path to matlab obtained in step i.
+
+    iii. Install matlab.engine
+
+    ```bash
+    python setup.py install
+    ```
+
+II. conda
+
+1.  Install [Miniconda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html#regular-installation) in your system.
+
+2.  Create an environment, see this [guide](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands).
+
+3.  Check its existence:
+
+    ```bash
+    conda info -envs
+    ```
+
+4.  Activate it:
+
+    ```bash
+    conda activate myenv
+    ```
+
+5.  Deactivate it:
+
+    ```bash
+    conda deactivate
+    ```
 
 ## Execution
 
