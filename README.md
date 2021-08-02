@@ -22,12 +22,6 @@ Ancient Greek: <em>ρεω (rhéō, "flow")</em>
 
 ## Installation
 
-0. Install VTK for python3:
-
-```bash
-sudo apt-get install python3-vtk
-```
-
 I. pip
 
 1.  Create a virtual environment (See `venv` section below) in `rheos` project root folder.

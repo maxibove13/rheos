@@ -491,6 +491,9 @@ def build_arc(p1, p2, arc_dir, ax, n, build_nodes=True):
         else:
             theta = - alpha + arc_dir
 
+    if arc_dir == 90:
+        theta -= 180
+
     ax.add_patch(Arc((p_m.x,p_m.y), d, d, theta1=theta, theta2=theta+180));
 
     # Initialize nodes list
@@ -504,11 +507,17 @@ def build_arc(p1, p2, arc_dir, ax, n, build_nodes=True):
             beta = np.rad2deg(s / (d / 2))
 
             # Some of all angles of triangle (p_m.x-p1.x)^(d/2)^(p_m.y-p1.y) is 180°
-            gamma = 180 - 90 - alpha
+            gamma = 180 + 90 - alpha
+
+            # Nodes angle relative to x
+            if arc_dir == 90:
+                epsilon = beta + gamma
+            elif arc_dir == -90:
+                epsilon = - (beta + gamma)
 
             # Coordinates of node
-            x_node = p_m.x - np.cos(np.deg2rad(beta + gamma)) * (d / 2)
-            y_node = p_m.y - np.sin(np.deg2rad(beta + gamma)) * (d / 2)
+            x_node = p_m.x - np.cos(np.deg2rad(epsilon)) * (d / 2)
+            y_node = p_m.y - np.sin(np.deg2rad(epsilon)) * (d / 2)
 
 
             # Append node Point to node list

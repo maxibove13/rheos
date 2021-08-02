@@ -11,6 +11,9 @@ __date__ = "06/21"
 # Built-in modules
 import glob
 import os
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # Local modules
 from post.plot3d import plotgrid, plotshow
@@ -18,6 +21,9 @@ from post.mayavi_demo import mayavi_flower
 from pre.checkgrd import readgrd
 from pre.makegrid import makegrd
 from tools.files_manager import rmfiles
+
+
+# Ignore all warnings
 
 
 def main_pre():
@@ -36,7 +42,8 @@ def main_pre():
             exit(1)
         else:
             print(
-                "This case does not exist in /samples folder, please specify a different casename")
+                "This case does not exist in /samples folder, please specify a different casename"
+            )
 
     # Define the case dir
     casedir = "./samples/" + casename
@@ -45,7 +52,7 @@ def main_pre():
     makegrd(casename)
 
     # Look for all grd files inside the case folder
-    grd_names = glob.glob(casedir + '/*.grd')
+    grd_names = glob.glob(casedir + "/*.grd")
 
     # Define rgb colors
     rgb = [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
@@ -63,7 +70,7 @@ def main_pre():
 
         # Plot this block in 3d with mayavi
         print(f"Ploting block: {block + 1} | File: {grd_names[block]}")
-        plotgrid(grd_names[block], xc, yc, zc, c[block])
+        plotgrid(xc, yc, zc, c[block])
 
     # Display all grid blocks
     plotshow()

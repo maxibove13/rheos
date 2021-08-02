@@ -15,7 +15,7 @@ from mayavi.mlab import mesh, show
 import numpy as np
 
 
-def plotgrid(grid_filename, x, y, z, c):
+def plotgrid(x, y, z, c, repr="wireframe", op=1.0):
     """Function to plot all grid blocks in a 3D scene using mayavi library"""
 
     # Loop through the three dimensions.
@@ -27,10 +27,22 @@ def plotgrid(grid_filename, x, y, z, c):
         z = np.moveaxis(z, 0, -1)
 
         # Plot x, y, z of the first and last element of the third coord (Top-Bottom, South-North, West-East for each loop)
-        mesh(x[:, :, 0], y[:, :, 0], z[:, :, 0],
-             representation='wireframe', color=c)
-        mesh(x[:, :, -1], y[:, :, -1], z[:, :, -1],
-             representation='wireframe', color=c)
+        mesh(
+            x[:, :, 0],
+            y[:, :, 0],
+            z[:, :, 0],
+            representation=repr,
+            color=c,
+            opacity=op,
+        )
+        mesh(
+            x[:, :, -1],
+            y[:, :, -1],
+            z[:, :, -1],
+            representation=repr,
+            color=c,
+            opacity=op,
+        )
 
         # Avoid blocking the execution
         # plt.pause(0.001)

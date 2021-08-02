@@ -1,4 +1,6 @@
 numpy
+matplotlib
 ipykernel
 PyQt5
 mayavi
+vtk==9.0.1
